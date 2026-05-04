@@ -11,6 +11,7 @@
     </div>
     <button onclick="ctx.fillRect(0, 0, 280, 280)">Clear</button>
     <button onclick="makePrediction()">Predict</button>
+    <div>Result: <span id="result">_</span></div>
 
     <script>
       let canvas = document.querySelector('canvas');
@@ -42,7 +43,7 @@
     </script>
 
     <script>
-      function makePrediction() {
+      async function makePrediction() {
         let tinyCanvas = document.createElement('canvas');
         tinyCanvas.width = 28;
         tinyCanvas.height = 28;
@@ -62,7 +63,16 @@
           grid.push(row);
         }
 
-        console.log(grid);
+        let res = await fetch('http://127.0.0.1:5000/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ grid }),
+        });
+
+        let data = await res.json();
+        document.querySelector('#result').textContent = data.digit;
       }
     </script>
   </body>
